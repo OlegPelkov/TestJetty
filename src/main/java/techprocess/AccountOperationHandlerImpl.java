@@ -15,7 +15,7 @@ public class AccountOperationHandlerImpl implements AccountOperationHandler {
     @Override
     public String transfer(long sourceId, long destinationId, BigDecimal value) {
         Account srcAccount = accountDataHolder.get(sourceId);
-        Account destAccount = accountDataHolder.get(sourceId);
+        Account destAccount = accountDataHolder.get(destinationId);
         if(srcAccount==null){
             return sourceId + ACCOUNT_NOT_FOUND;
         }

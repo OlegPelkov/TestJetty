@@ -39,11 +39,7 @@ public class AccountImpl implements Account {
     }
 
     public void widthrawal(BigDecimal amount) {
-        while (true) {
-            BigDecimal oldVal = currentValue.get();
-            if (currentValue.compareAndSet(oldVal, oldVal.subtract(amount)))
-                return;
-        }
+        currentValue.set(currentValue.get().subtract(amount));
     }
 
     @Override
