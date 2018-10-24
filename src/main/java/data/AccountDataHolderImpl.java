@@ -1,14 +1,17 @@
-import java.math.BigDecimal;
+package data;
+
+import account.Account;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AccountDataHolder {
+public class AccountDataHolderImpl implements AccountDataHolder {
 
     public static class SingletonHolder {
-        public static final AccountDataHolder INSTANCE = new AccountDataHolder();
+        public static final AccountDataHolderImpl INSTANCE = new AccountDataHolderImpl();
     }
 
-    public static AccountDataHolder getInstance() {
+    public static AccountDataHolderImpl getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
@@ -20,5 +23,9 @@ public class AccountDataHolder {
 
     public Account put(Long key, Account value) {
         return accountData.put(key, value);
+    }
+
+    public boolean remove(Long key, Account value) {
+        return accountData.remove(key, value);
     }
 }

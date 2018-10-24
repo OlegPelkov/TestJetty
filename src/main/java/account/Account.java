@@ -1,3 +1,5 @@
+package account;
+
 import java.math.BigDecimal;
 
 public interface Account {
@@ -10,5 +12,14 @@ public interface Account {
 
     void widthrawal(BigDecimal value);
 
+    BigDecimal getCurrentValue();
+
+    void lock();
+
+    void unlock();
+
+    boolean isDeleted();
+
+    void setDeleted(boolean deletedStatus);
 }
 
