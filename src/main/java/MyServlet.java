@@ -1,5 +1,12 @@
 
 
+import com.google.gson.Gson;
+import messages.OperationResponce;
+
+import messages.OperationStatus;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import techprocess.AccountOperationHandlerImpl;
 
 import javax.servlet.ServletException;
@@ -9,41 +16,88 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 
+import static messages.Messages.EMPTY_COMMAND;
+import static messages.Messages.INVALID_PARAMETER;
+import static messages.Messages.UNKNOWN_COMMAND;
+
 public class MyServlet extends HttpServlet {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MyServlet.class);
+
     private AccountOperationHandlerImpl accountOperationHandler;
+    private Gson gson;
+
+    private final static String COMMAND = "command";
+    private final static String SRC_ID = "src_id";
+    private final static String ID = "id";
+    private final static String DEST_ID = "dest_id";
+    private final static String ACCOUNT_ID = "account_id";
+    private final static String VALUE = "value";
+
+    private final static String COMMAND_TRANCFER = "transfer";
+    private final static String COMMAND_CREATE = "create";
+    private final static String COMMAND_DELETE = "delete";
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String command = req.getParameter("command");
-        String sourceId = req.getParameter("source_id");
-        String accountId = req.getParameter("id");
-        String destanationId = req.getParameter("destination_id");
-        String value = req.getParameter("value");
-        Long actualSourceId = null;
-        Long actualDestanationId  = null;
-        Long actualAccountId  = null;
-        String result = null;
-        BigDecimal actualValue = BigDecimal.valueOf(Double.valueOf(value)).setScale(2);
-        if(sourceId!=null) {
-            actualSourceId = Long.valueOf(sourceId);
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+        LOG.info("GET: {} ",req.getRequestURL().toString());
+
+        String command = req.getParameter(COMMAND);
+        String srcId = req.getParameter(SRC_ID);
+        String accountId = req.getParameter(ID);
+        String destId = req.getParameter(DEST_ID);
+        String value = req.getParameter(VALUE);
+        OperationResponce result = execute(command,srcId,accountId,destId,value);
+        LOG.info("RESULT: {}",result.toString());
+        resp.getWriter().write(gson.toJson(result));
+    }
+
+    private OperationResponce execute(String command, String srcId, String accountId, String destId , String value){
+
+        Long formatSrcId = null;
+        Long formatDestId  = null;
+        Long formatAccountId  = null;
+
+        if(command==null){
+            return new OperationResponce(OperationStatus.ERROR,EMPTY_COMMAND);
         }
-        if(destanationId!=null) {
-            actualDestanationId = Long.valueOf(destanationId);
+
+        if (command.equals(COMMAND_TRANCFER)) {
+            if (value != null && !NumberUtils.isParsable(value)) {
+                return new OperationResponce(OperationStatus.ERROR, INVALID_PARAMETER + " " + VALUE + " : " + value);
+            }
+            if (srcId != null && !NumberUtils.isParsable(srcId)) {
+                return new OperationResponce(OperationStatus.ERROR, INVALID_PARAMETER + " " + SRC_ID + " : " + srcId);
+            }
+            if (destId != null && !NumberUtils.isParsable(destId)) {
+                return new OperationResponce(OperationStatus.ERROR, INVALID_PARAMETER + " " + DEST_ID + " : " + destId);
+            }
+            formatSrcId = Long.valueOf(srcId);
+            formatDestId = Long.valueOf(destId);
+            return accountOperationHandler.transfer(formatSrcId, formatDestId, formatValue(value));
         }
-        if(accountId!=null) {
-            actualAccountId = Long.valueOf(accountId);
+
+        if(command.equals(COMMAND_CREATE)){
+            if (value != null && !NumberUtils.isParsable(value)) {
+                return new OperationResponce(OperationStatus.ERROR, INVALID_PARAMETER + " " + VALUE + " : " + value);
+            }
+            return accountOperationHandler.createNewAccount(formatValue(value));
         }
-        if(command.equals("create")){
-            result = accountOperationHandler.createNewAccount(actualValue);
+        if(command.equals(COMMAND_DELETE)){
+            if (accountId != null && !NumberUtils.isParsable(accountId)) {
+                return new OperationResponce(OperationStatus.ERROR, INVALID_PARAMETER + " " + ACCOUNT_ID + " : " + accountId);
+            }
+            formatAccountId = Long.valueOf(accountId);
+            return accountOperationHandler.deleteAccount(formatAccountId);
         }
-        if(command.equals("delete")){
-            result = accountOperationHandler.deleteAccount(actualAccountId);
-        }
-        if(command.equals("transfer")){
-            result = accountOperationHandler.transfer(actualSourceId, actualDestanationId, actualValue);
-        }
-        resp.getWriter().write(result);
+
+        return new OperationResponce(OperationStatus.ERROR,UNKNOWN_COMMAND);
+
+    }
+
+    private BigDecimal formatValue(String value){
+        return BigDecimal.valueOf(Double.valueOf(value)).setScale(2);
     }
 
     @Override
@@ -53,14 +107,13 @@ public class MyServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        System.out.println("-------- destroy  "+this);
         super.destroy();
     }
 
     @Override
     public void init() throws ServletException {
-        System.out.println("------------ init  "+this);
         super.init();
         accountOperationHandler = new AccountOperationHandlerImpl();
+        gson = new Gson();
     }
 }

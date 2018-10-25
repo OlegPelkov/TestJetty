@@ -2,44 +2,35 @@ package account;
 
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class AccountImpl implements Account {
 
-    private Long id;
-    private AtomicReference<BigDecimal> currentValue;
-    private Lock lock = new ReentrantLock();
-    private AtomicBoolean deletedStatus = new AtomicBoolean(false);
+    private final Long id;
+    private BigDecimal currentValue;
+    private final Lock lock = new ReentrantLock();
+    private final AtomicBoolean deletedStatus = new AtomicBoolean(false);
 
     public AccountImpl(Long id, BigDecimal currentValue) {
         this.id = id;
-        this.currentValue = new AtomicReference<>(currentValue);
+        this.currentValue = currentValue;
     }
 
     public long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public BigDecimal getCurrentValue(){
-        return currentValue.get();
+        return currentValue;
     }
 
     public void introduction(BigDecimal amount) {
-        while (true) {
-            BigDecimal oldVal = currentValue.get();
-            if (currentValue.compareAndSet(oldVal, oldVal.add(amount)))
-                return;
-        }
+         currentValue.add(amount);
     }
 
     public void widthrawal(BigDecimal amount) {
-        currentValue.set(currentValue.get().subtract(amount));
+        currentValue = currentValue.subtract(amount);
     }
 
     @Override

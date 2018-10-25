@@ -3,6 +3,8 @@ package techprocess;
 import account.Account;
 import account.AccountImpl;
 import data.AccountDataHolderImpl;
+import messages.OperationResponce;
+import messages.OperationStatus;
 
 import java.math.BigDecimal;
 
@@ -10,59 +12,73 @@ import static messages.Messages.*;
 
 public class AccountOperationHandlerImpl implements AccountOperationHandler {
 
-    AccountDataHolderImpl accountDataHolder = AccountDataHolderImpl.getInstance();
+    private AccountDataHolderImpl accountDataHolder = AccountDataHolderImpl.getInstance();
 
     @Override
-    public String transfer(long sourceId, long destinationId, BigDecimal value) {
+    public OperationResponce transfer(long sourceId, long destinationId, BigDecimal value) {
+
         Account srcAccount = accountDataHolder.get(sourceId);
         Account destAccount = accountDataHolder.get(destinationId);
-        if(srcAccount==null){
-            return sourceId + ACCOUNT_NOT_FOUND;
-        }
-        if(destAccount==null){
-            return destinationId + ACCOUNT_NOT_FOUND;
-        }
-        srcAccount.lock();
-        try {
-            if(srcAccount.isDeleted()){
-                return sourceId + ACCOUNT_NOT_FOUND;
-            }
-            if (!(srcAccount.getCurrentValue().compareTo(value) < 0)) {
-                destAccount.lock();
-                try {
-                    if(destAccount.isDeleted()){
-                        return destinationId + ACCOUNT_NOT_FOUND;
-                    }
-                    srcAccount.widthrawal(value);
-                    destAccount.introduction(value);
-                } finally {
-                    destAccount.unlock();
-                }
 
-            } else {
-                return sourceId + NOT_ENOUGH_MONEY + " CURRENT VALUE : " + srcAccount.getCurrentValue();
+        if (srcAccount == null) {
+            return new OperationResponce(OperationStatus.ERROR,sourceId + ACCOUNT_NOT_FOUND);
+        }
+        if (destAccount == null) {
+            return new OperationResponce(OperationStatus.ERROR, destinationId + ACCOUNT_NOT_FOUND);
+        }
+
+        // firstLockAccount secondLockAccount for resolve potential deadlock
+        Account firstLockAccount;
+        Account secondLockAccount;
+
+        if (sourceId < destinationId) {
+            firstLockAccount = srcAccount;
+            secondLockAccount = destAccount;
+        } else {
+            firstLockAccount = destAccount;
+            secondLockAccount = srcAccount;
+        }
+
+        firstLockAccount.lock();
+        try {
+            //check isDeleted() because another thread can delete this account, between our get() and lock()
+            if (firstLockAccount.isDeleted()) {
+                return new OperationResponce(OperationStatus.ERROR,firstLockAccount.getId() + ACCOUNT_NOT_FOUND);
+            }
+            try {
+                secondLockAccount.lock();
+                if (destAccount.isDeleted()) {
+                    return new OperationResponce(OperationStatus.ERROR, destinationId + ACCOUNT_NOT_FOUND);
+                }
+                if (!(srcAccount.getCurrentValue().compareTo(value) < 0)) {
+                    innerTransfer(srcAccount, destAccount, value);
+                } else {
+                    return new OperationResponce(OperationStatus.ERROR, sourceId + NOT_ENOUGH_MONEY + " CURRENT VALUE : " + srcAccount.getCurrentValue());
+                }
+            } finally {
+                secondLockAccount.unlock();
             }
         } finally {
-            srcAccount.unlock();
+            firstLockAccount.unlock();
         }
-        return SUCCESS_TRANSFER_MONEY +" from : " + sourceId + " to : " + destinationId + " value : " + value;
+        return new OperationResponce(OperationStatus.SUCCESS, SUCCESS_TRANSFER_MONEY + " from : " + sourceId + " to : " + destinationId + " value : " + value);
     }
 
     @Override
-    public String createNewAccount(BigDecimal initialValue) {
+    public OperationResponce createNewAccount(BigDecimal initialValue) {
         try {
             long nextId = IdCounter.getInstance().getNextId();
             if (accountDataHolder.get(nextId) == null) {
                 accountDataHolder.put(nextId, new AccountImpl(nextId, initialValue));
-                return String.valueOf(nextId);
+                return new OperationResponce(OperationStatus.SUCCESS, String.valueOf(nextId));
             } throw new Exception("Can not create account with id: " + nextId);
         } catch (Exception e) {
-            return ERROR_CREATE_ACCOUNT + " " + e.getMessage();
+            return new OperationResponce(OperationStatus.ERROR, ERROR_CREATE_ACCOUNT + " " + e.getMessage());
         }
     }
 
     @Override
-    public String deleteAccount(long id) {
+    public OperationResponce deleteAccount(long id) {
         try {
             Account account;
             if ((account = accountDataHolder.get(id)) != null) {
@@ -70,13 +86,18 @@ public class AccountOperationHandlerImpl implements AccountOperationHandler {
                 try {
                     accountDataHolder.remove(id, account);
                     account.setDeleted(true);
-                    return String.valueOf(id);
+                    return new OperationResponce(OperationStatus.SUCCESS, String.valueOf(id));
                 } finally {
                     account.unlock();
                 }
             } throw new Exception("Can not remove account with id: " + id);
         } catch (Exception e) {
-            return ERROR_DELETE_ACCOUNT + " " + e.getMessage();
+            return new OperationResponce(OperationStatus.ERROR,ERROR_DELETE_ACCOUNT + " " + e.getMessage());
         }
+    }
+
+    private void innerTransfer( Account srcAccount,  Account destAccount, BigDecimal value){
+        srcAccount.widthrawal(value);
+        destAccount.introduction(value);
     }
 }

@@ -1,9 +1,11 @@
 package techprocess;
 
+import messages.OperationResponce;
+
 import java.math.BigDecimal;
 
 public interface AccountOperationHandler {
-    String transfer(long sourceId, long destinationId, BigDecimal value);
-    String createNewAccount(BigDecimal initialValue);
-    String deleteAccount(long id);
+    OperationResponce transfer(long sourceId, long destinationId, BigDecimal value);
+    OperationResponce createNewAccount(BigDecimal initialValue);
+    OperationResponce deleteAccount(long id);
 }
