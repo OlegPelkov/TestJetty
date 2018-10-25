@@ -1,10 +1,10 @@
-package messages;
+package test.messages;
 
 public class Messages {
 
     public static final String ACCOUNT_NOT_FOUND = " Account not found";
 
-    public static final String NOT_ENOUGH_MONEY = " Not enough money";
+    public static final String NOT_ENOUGH_MONEY = " Not enough money.";
 
     public static final String ERROR_CREATE_ACCOUNT = " Error create account";
 

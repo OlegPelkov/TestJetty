@@ -1,18 +1,18 @@
-package messages;
+package test.messages;
 
-public class OperationResponce {
+public class OperationResponse {
 
     private OperationStatus operationStatus;
     private String msg;
 
-    public OperationResponce(OperationStatus operationStatus, String msg) {
+    public OperationResponse(OperationStatus operationStatus, String msg) {
         this.operationStatus = operationStatus;
         this.msg = msg;
     }
 
     @Override
     public String toString() {
-        return "OperationResponce{" +
+        return "OperationResponse{" +
                 "operationStatus=" + operationStatus +
                 ", msg='" + msg + '\'' +
                 '}';

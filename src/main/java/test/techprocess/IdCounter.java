@@ -1,4 +1,4 @@
-package techprocess;
+package test.techprocess;
 
 import java.util.concurrent.atomic.AtomicLong;
 

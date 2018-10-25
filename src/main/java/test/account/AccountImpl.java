@@ -1,4 +1,4 @@
-package account;
+package test.account;
 
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -49,5 +49,21 @@ public class AccountImpl implements Account {
 
     public void setDeleted(boolean deletedStatus) {
         this.deletedStatus.set(deletedStatus);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AccountImpl account = (AccountImpl) o;
+
+        return id.equals(account.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }
