@@ -12,6 +12,5 @@ public class TestCreateAccount extends TestScenario {
         String value = "1000";
         OperationResponse result = executeCommandQuery(Command.COMMAND + "=" + CommandCreate.NAME + "&" + Command.VALUE +"="+ value);
         Assert.assertEquals(OperationStatus.SUCCESS, result.getOperationStatus());
-        Assert.assertEquals("1", result.getMsg());
     }
 }

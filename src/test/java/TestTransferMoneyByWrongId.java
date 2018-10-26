@@ -6,6 +6,7 @@ import moneyTransfer.techprocess.commands.CommandTransfer;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static moneyTransfer.messages.Messages.ACCOUNT_NOT_FOUND;
 import static moneyTransfer.messages.Messages.INVALID_PARAMETER;
 
 
@@ -33,14 +34,14 @@ public class TestTransferMoneyByWrongId extends TestScenario {
                 Command.SRC_ID + "=" + wrongId + "&" + Command.DEST_ID + "=" +  createResultDestАccount.getMsg() + "&" +
                 Command.VALUE + "=" +transferValue);
         Assert.assertEquals(OperationStatus.ERROR, trancferResult1.getOperationStatus());
-        Assert.assertTrue(trancferResult1.getMsg().contains(INVALID_PARAMETER));
+        Assert.assertTrue(trancferResult1.getMsg().contains(ACCOUNT_NOT_FOUND));
 
         // transfer attempt dest wrong id
         OperationResponse trancferResult2 = executeCommandQuery(Command.COMMAND + "=" + CommandTransfer.NAME + "&" +
                 Command.SRC_ID + "=" + createResultSrcАccount.getMsg() + "&" + Command.DEST_ID + "=" + wrongId + "&" +
                 Command.VALUE + "=" +transferValue);
         Assert.assertEquals(OperationStatus.ERROR, trancferResult2.getOperationStatus());
-        Assert.assertTrue(trancferResult2.getMsg().contains(INVALID_PARAMETER));
+        Assert.assertTrue(trancferResult2.getMsg().contains(ACCOUNT_NOT_FOUND));
 
     }
 }

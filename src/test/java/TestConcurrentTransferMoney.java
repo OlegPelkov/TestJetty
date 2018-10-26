@@ -36,7 +36,7 @@ public class TestConcurrentTransferMoney extends TestScenario {
         Assert.assertEquals(OperationStatus.SUCCESS, createResultDestАccount.getOperationStatus());
 
 
-        // Threads transfer money between two accounts. In the end money in accounts will be equally initValue.
+        // Threads transfer money between two accounts. In the end of test, money in accounts will be equally initValue.
 
         Runnable taskFromFirstToSecond = () -> {
             int repeatCount = 5;
