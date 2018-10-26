@@ -18,7 +18,7 @@ public class TestConcurrentTransferMoney extends TestScenario {
 
     private static final Logger LOG = LoggerFactory.getLogger(AccountServlet.class);
 
-    private int poolSize = 200;
+    private int poolSize = 1000;
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(poolSize);
 
     @Test
