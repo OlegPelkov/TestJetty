@@ -1,32 +1,34 @@
-package test;
+package moneyTransfer;
 
 import com.google.gson.Gson;
-import test.messages.OperationResponse;
+import moneyTransfer.messages.OperationResponse;
 
-import test.messages.OperationStatus;
-import org.apache.commons.lang3.math.NumberUtils;
+import moneyTransfer.messages.OperationStatus;
+import moneyTransfer.techprocess.processPerformers.AccountOperationHandler;
+import moneyTransfer.techprocess.processPerformers.AccountOperationHandlerVIPImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import test.techprocess.AccountOperationHandlerImpl;
-import test.techprocess.CommandsContainer;
-import test.techprocess.commands.Command;
+import moneyTransfer.techprocess.processPerformers.AccountOperationHandlerStandardImpl;
+import moneyTransfer.techprocess.CommandsContainer;
+import moneyTransfer.techprocess.commands.Command;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
-import static test.messages.Messages.EMPTY_COMMAND;
-import static test.messages.Messages.INVALID_PARAMETER;
-import static test.messages.Messages.UNKNOWN_COMMAND;
+import static moneyTransfer.messages.Messages.EMPTY_COMMAND;
+import static moneyTransfer.messages.Messages.UNKNOWN_COMMAND;
 
 public class AccountServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(AccountServlet.class);
 
-    private AccountOperationHandlerImpl accountOperationHandler;
+    private final Map<String, AccountOperationHandler> operationHandlerContainer = new HashMap<>();
+    private AccountOperationHandlerStandardImpl accountOperationHandler;
     private CommandsContainer commandsContainer;
     private Gson gson;
 
@@ -46,7 +48,7 @@ public class AccountServlet extends HttpServlet {
         }
         Command commandHandler = commandsContainer.getCommand(command);
         if(commandHandler!=null){
-            return commandHandler.execute(accountOperationHandler, req);
+            return commandHandler.execute(operationHandlerContainer, req);
         }
         return new OperationResponse(OperationStatus.ERROR,UNKNOWN_COMMAND + " : "+command);
     }
@@ -64,7 +66,8 @@ public class AccountServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        accountOperationHandler = new AccountOperationHandlerImpl();
+        this.operationHandlerContainer.put(AccountOperationHandlerStandardImpl.class.getSimpleName(), new AccountOperationHandlerStandardImpl());
+        this.operationHandlerContainer.put(AccountOperationHandlerVIPImpl.class.getSimpleName(), new AccountOperationHandlerVIPImpl());
         commandsContainer = new CommandsContainer();
         commandsContainer.init();
         gson = new Gson();

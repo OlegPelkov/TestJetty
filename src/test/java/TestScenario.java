@@ -6,11 +6,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import test.AccountServer;
-import test.messages.OperationResponse;
+import moneyTransfer.AccountServer;
+import moneyTransfer.messages.OperationResponse;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -18,7 +17,7 @@ import java.io.InputStreamReader;
 //@Ignore
 public class TestScenario {
 
-    private static final String url = "http://127.0.0.1:8081/test?";
+    private static final String url = "http://127.0.0.1:8081/moneyTransfer?";
     private CloseableHttpClient client;
     private Gson gson;
 

@@ -1,4 +1,4 @@
-package test.techprocess;
+package moneyTransfer.techprocess;
 
 import java.util.concurrent.atomic.AtomicLong;
 

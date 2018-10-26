@@ -1,18 +1,22 @@
-package test.account;
+package moneyTransfer.account;
 
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class AccountImpl implements Account {
+public class AccountStandardImpl implements Account {
+
+    /**
+     * Use concurrent lock
+     **/
 
     private final Long id;
     private BigDecimal currentValue;
     private final Lock lock = new ReentrantLock();
     private final AtomicBoolean deletedStatus = new AtomicBoolean(false);
 
-    public AccountImpl(Long id, BigDecimal currentValue) {
+    public AccountStandardImpl(Long id, BigDecimal currentValue) {
         this.id = id;
         this.currentValue = currentValue;
     }
@@ -21,16 +25,24 @@ public class AccountImpl implements Account {
         return id;
     }
 
-    public BigDecimal getCurrentValue(){
+    public BigDecimal getCurrentValue() {
         return currentValue;
     }
 
-    public void introduction(BigDecimal amount) {
-         currentValue.add(amount);
+    /**
+     * result will be ignored in AccountOperationHandlerStandardImpl
+     **/
+    public int introduction(BigDecimal amount) {
+        currentValue = currentValue.add(amount);
+        return 1;
     }
 
-    public void widthrawal(BigDecimal amount) {
+    /**
+     * return always 1
+     **/
+    public int withdrawal(BigDecimal amount) {
         currentValue = currentValue.subtract(amount);
+        return 1;
     }
 
     @Override
@@ -52,11 +64,16 @@ public class AccountImpl implements Account {
     }
 
     @Override
+    public boolean isVIP() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AccountImpl account = (AccountImpl) o;
+        AccountStandardImpl account = (AccountStandardImpl) o;
 
         return id.equals(account.id);
 

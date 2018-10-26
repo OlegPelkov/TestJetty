@@ -1,16 +1,18 @@
-package test.techprocess;
+package moneyTransfer.techprocess.processPerformers;
 
-import test.account.Account;
-import test.account.AccountImpl;
-import test.data.AccountDataHolderImpl;
-import test.messages.OperationResponse;
-import test.messages.OperationStatus;
+import moneyTransfer.account.Account;
+import moneyTransfer.account.AccountStandardImpl;
+import moneyTransfer.account.AccountVIPImpl;
+import moneyTransfer.data.AccountDataHolderImpl;
+import moneyTransfer.messages.OperationResponse;
+import moneyTransfer.messages.OperationStatus;
+import moneyTransfer.techprocess.IdCounter;
 
 import java.math.BigDecimal;
 
-import static test.messages.Messages.*;
+import static moneyTransfer.messages.Messages.*;
 
-public class AccountOperationHandlerImpl implements AccountOperationHandler {
+public class AccountOperationHandlerStandardImpl implements AccountOperationHandler {
 
     private AccountDataHolderImpl accountDataHolder = AccountDataHolderImpl.getInstance();
 
@@ -41,7 +43,7 @@ public class AccountOperationHandlerImpl implements AccountOperationHandler {
 
         firstLockAccount.lock();
         try {
-            //check isDeleted() because another thread can delete this test.account, between our get() and lock()
+            //check isDeleted() because another thread can delete this moneyTransfer.account, between our get() and lock()
             if (firstLockAccount.isDeleted()) {
                 return new OperationResponse(OperationStatus.ERROR,"FOR ID : " + firstLockAccount.getId() + ACCOUNT_NOT_FOUND);
             }
@@ -65,13 +67,17 @@ public class AccountOperationHandlerImpl implements AccountOperationHandler {
     }
 
     @Override
-    public OperationResponse createNewAccount(BigDecimal initialValue) {
+    public OperationResponse createNewAccount(BigDecimal initialValue, boolean vip) {
         try {
             long nextId = IdCounter.getInstance().getNextId();
             if (accountDataHolder.get(nextId) == null) {
-                accountDataHolder.put(nextId, new AccountImpl(nextId, initialValue));
+                if(!vip) {
+                    accountDataHolder.put(nextId, new AccountStandardImpl(nextId, initialValue));
+                } else {
+                    accountDataHolder.put(nextId, new AccountVIPImpl(nextId, initialValue));
+                }
                 return new OperationResponse(OperationStatus.SUCCESS, String.valueOf(nextId));
-            } throw new Exception("Can not create test.account with id: " + nextId);
+            } throw new Exception("Can not create moneyTransfer.account with id: " + nextId);
         } catch (Exception e) {
             return new OperationResponse(OperationStatus.ERROR, ERROR_CREATE_ACCOUNT + " " + e.getMessage());
         }
@@ -90,14 +96,14 @@ public class AccountOperationHandlerImpl implements AccountOperationHandler {
                 } finally {
                     account.unlock();
                 }
-            } throw new Exception("Can not remove test.account with id: " + id);
+            } throw new Exception("Can not remove moneyTransfer.account with id: " + id);
         } catch (Exception e) {
             return new OperationResponse(OperationStatus.ERROR,ERROR_DELETE_ACCOUNT + " WITH ID : " +id + ". " + e.getMessage());
         }
     }
 
     private void innerTransfer( Account srcAccount,  Account destAccount, BigDecimal value){
-        srcAccount.widthrawal(value);
+        srcAccount.withdrawal(value);
         destAccount.introduction(value);
     }
 }

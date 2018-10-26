@@ -1,4 +1,4 @@
-package test;
+package moneyTransfer;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.LogManager;
@@ -20,6 +20,6 @@ public class Main {
         console.setLayout(new PatternLayout(LOGGER_PATTERN));
         console.setThreshold(Priority.INFO);
         console.activateOptions();
-        org.apache.log4j.Logger.getLogger("test").addAppender(console);
+        org.apache.log4j.Logger.getLogger("moneyTransfer").addAppender(console);
     }
 }

@@ -1,4 +1,4 @@
-package test;
+package moneyTransfer;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -26,7 +26,7 @@ public class AccountServer {
         server.setHandler(servletContextHandler);
         AccountServlet myServlet = new AccountServlet();
         ServletHolder servletHolder = new ServletHolder(myServlet);
-        servletContextHandler.addServlet(servletHolder,"/test");
+        servletContextHandler.addServlet(servletHolder, "/moneyTransfer");
         server.start();
     }
 

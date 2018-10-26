@@ -1,6 +1,6 @@
-package test.data;
+package moneyTransfer.data;
 
-import test.account.Account;
+import moneyTransfer.account.Account;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

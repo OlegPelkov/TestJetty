@@ -1,10 +1,11 @@
-package test.techprocess.commands;
+package moneyTransfer.techprocess.commands;
 
-import test.messages.OperationResponse;
-import test.techprocess.AccountOperationHandler;
+import moneyTransfer.messages.OperationResponse;
+import moneyTransfer.techprocess.processPerformers.AccountOperationHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.Map;
 
 public abstract class Command {
 
@@ -12,8 +13,11 @@ public abstract class Command {
     protected final static String ID = "id";
     protected final static String DEST_ID = "destId";
     protected final static String VALUE = "value";
+    protected final static String VIP = "vip";
 
-    public abstract OperationResponse execute(AccountOperationHandler accountOperationHandler, HttpServletRequest req);
+    protected AccountOperationHandler accountOperationHandler = null;
+
+    public abstract OperationResponse execute(Map<String, AccountOperationHandler> operationHandlerContainer, HttpServletRequest req);
 
     protected Long getLongFormat(String value){
         try {
@@ -21,6 +25,10 @@ public abstract class Command {
         } catch (NumberFormatException e){
             return 0L;
         }
+    }
+
+    protected boolean getBoolean(String value){
+        return Boolean.valueOf(value);
     }
 
     protected BigDecimal getBigDecimalFormat(String value){

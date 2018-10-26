@@ -1,6 +1,6 @@
-package test.data;
+package moneyTransfer.data;
 
-import test.account.Account;
+import moneyTransfer.account.Account;
 
 public interface AccountDataHolder {
     Account get(Long key);

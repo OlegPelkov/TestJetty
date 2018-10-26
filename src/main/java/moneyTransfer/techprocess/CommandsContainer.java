@@ -1,9 +1,9 @@
-package test.techprocess;
+package moneyTransfer.techprocess;
 
-import test.techprocess.commands.Command;
-import test.techprocess.commands.CommandCreate;
-import test.techprocess.commands.CommandDelete;
-import test.techprocess.commands.CommandTransfer;
+import moneyTransfer.techprocess.commands.Command;
+import moneyTransfer.techprocess.commands.CommandCreate;
+import moneyTransfer.techprocess.commands.CommandDelete;
+import moneyTransfer.techprocess.commands.CommandTransfer;
 
 import java.util.HashMap;
 import java.util.Map;
