@@ -30,7 +30,7 @@ public class AccountStandardImpl implements Account {
     }
 
     /**
-     * result will be ignored in AccountOperationHandlerStandardImpl
+     * result will be ignored in AccountOperationHandlerLockImpl
      **/
     public int introduction(BigDecimal amount) {
         currentValue = currentValue.add(amount);
@@ -61,11 +61,6 @@ public class AccountStandardImpl implements Account {
 
     public void setDeleted(boolean deletedStatus) {
         this.deletedStatus.set(deletedStatus);
-    }
-
-    @Override
-    public boolean isVIP() {
-        return false;
     }
 
     @Override

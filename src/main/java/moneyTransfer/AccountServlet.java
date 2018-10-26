@@ -5,10 +5,10 @@ import moneyTransfer.messages.OperationResponse;
 
 import moneyTransfer.messages.OperationStatus;
 import moneyTransfer.techprocess.processPerformers.AccountOperationHandler;
-import moneyTransfer.techprocess.processPerformers.AccountOperationHandlerVIPImpl;
+import moneyTransfer.techprocess.processPerformers.AccountOperationHandlerLockImpl;
+import moneyTransfer.techprocess.processPerformers.AccountOperationHandlerCASImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import moneyTransfer.techprocess.processPerformers.AccountOperationHandlerStandardImpl;
 import moneyTransfer.techprocess.CommandsContainer;
 import moneyTransfer.techprocess.commands.Command;
 
@@ -17,8 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static moneyTransfer.messages.Messages.EMPTY_COMMAND;
 import static moneyTransfer.messages.Messages.UNKNOWN_COMMAND;
@@ -27,13 +25,19 @@ public class AccountServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(AccountServlet.class);
 
-    private final Map<String, AccountOperationHandler> operationHandlerContainer = new HashMap<>();
+    private  AccountOperationHandler operationHandlerContainer;
     private CommandsContainer commandsContainer;
     private Gson gson;
+    private boolean cas = false;
+    private long requestCounter = 0L;
+    public AccountServlet(boolean cas) {
+        this.cas = cas;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        LOG.info("GET: {} {}",req.getRequestURL().toString(), req.getQueryString());
+        requestCounter++;
+        LOG.info("GET: -{}- {} {}",requestCounter,req.getRequestURL().toString(), req.getQueryString());
         OperationResponse result = execute(req.getParameter(Command.COMMAND),req);
         LOG.info("RESULT: {}",result.toString());
         resp.getWriter().write(gson.toJson(result));
@@ -63,8 +67,11 @@ public class AccountServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        this.operationHandlerContainer.put(AccountOperationHandlerStandardImpl.class.getSimpleName(), new AccountOperationHandlerStandardImpl());
-        this.operationHandlerContainer.put(AccountOperationHandlerVIPImpl.class.getSimpleName(), new AccountOperationHandlerVIPImpl());
+        if(cas){
+            operationHandlerContainer = new AccountOperationHandlerCASImpl();
+        } else {
+            operationHandlerContainer = new AccountOperationHandlerLockImpl();
+        }
         commandsContainer = new CommandsContainer();
         commandsContainer.init();
         gson = new Gson();

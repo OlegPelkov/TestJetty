@@ -13,12 +13,9 @@ public abstract class Command {
     public final static String ID = "id";
     public final static String DEST_ID = "destId";
     public final static String VALUE = "value";
-    public final static String VIP = "vip";
     public final static String COMMAND = "command";
 
-    protected AccountOperationHandler accountOperationHandler = null;
-
-    public abstract OperationResponse execute(Map<String, AccountOperationHandler> operationHandlerContainer, HttpServletRequest req);
+    public abstract OperationResponse execute(AccountOperationHandler accountOperationHandler, HttpServletRequest req);
 
     protected Long getLongFormat(String value){
         try {
@@ -26,10 +23,6 @@ public abstract class Command {
         } catch (NumberFormatException e){
             return 0L;
         }
-    }
-
-    protected boolean getBoolean(String value){
-        return Boolean.valueOf(value);
     }
 
     protected BigDecimal getBigDecimalFormat(String value){

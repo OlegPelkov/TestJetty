@@ -19,12 +19,17 @@ public class AccountServer {
     }
 
     private Server server;
+    private boolean cas = false;
+
+    public void setCas(boolean cas) {
+        this.cas = cas;
+    }
 
     public void start() throws Exception {
         server = new Server(8081);
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         server.setHandler(servletContextHandler);
-        AccountServlet myServlet = new AccountServlet();
+        AccountServlet myServlet = new AccountServlet(cas);
         ServletHolder servletHolder = new ServletHolder(myServlet);
         servletContextHandler.addServlet(servletHolder, "/moneyTransfer");
         server.start();

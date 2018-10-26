@@ -2,7 +2,6 @@ package moneyTransfer.techprocess.processPerformers;
 
 import moneyTransfer.account.Account;
 import moneyTransfer.account.AccountStandardImpl;
-import moneyTransfer.account.AccountVIPImpl;
 import moneyTransfer.data.AccountDataHolderImpl;
 import moneyTransfer.messages.OperationResponse;
 import moneyTransfer.messages.OperationStatus;
@@ -12,7 +11,7 @@ import java.math.BigDecimal;
 
 import static moneyTransfer.messages.Messages.*;
 
-public class AccountOperationHandlerStandardImpl implements AccountOperationHandler {
+public class AccountOperationHandlerLockImpl implements AccountOperationHandler {
 
     private AccountDataHolderImpl accountDataHolder = AccountDataHolderImpl.getInstance();
 
@@ -43,7 +42,7 @@ public class AccountOperationHandlerStandardImpl implements AccountOperationHand
 
         firstLockAccount.lock();
         try {
-            //check isDeleted() because another thread can delete this moneyTransfer.account, between our get() and lock()
+            //check isDeleted() because another thread can delete this account, between our get() and lock()
             if (firstLockAccount.isDeleted()) {
                 return new OperationResponse(OperationStatus.ERROR,"FOR ID : " + firstLockAccount.getId() + ACCOUNT_NOT_FOUND);
             }
@@ -67,17 +66,13 @@ public class AccountOperationHandlerStandardImpl implements AccountOperationHand
     }
 
     @Override
-    public OperationResponse createNewAccount(BigDecimal initialValue, boolean vip) {
+    public OperationResponse createNewAccount(BigDecimal initialValue) {
         try {
             long nextId = IdCounter.getInstance().getNextId();
             if (accountDataHolder.get(nextId) == null) {
-                if(!vip) {
-                    accountDataHolder.put(nextId, new AccountStandardImpl(nextId, initialValue));
-                } else {
-                    accountDataHolder.put(nextId, new AccountVIPImpl(nextId, initialValue));
-                }
+                accountDataHolder.put(nextId, new AccountStandardImpl(nextId, initialValue));
                 return new OperationResponse(OperationStatus.SUCCESS, String.valueOf(nextId));
-            } throw new Exception("Can not create moneyTransfer.account with id: " + nextId);
+            } throw new Exception("Can not create account with id: " + nextId);
         } catch (Exception e) {
             return new OperationResponse(OperationStatus.ERROR, ERROR_CREATE_ACCOUNT + " " + e.getMessage());
         }
@@ -96,7 +91,7 @@ public class AccountOperationHandlerStandardImpl implements AccountOperationHand
                 } finally {
                     account.unlock();
                 }
-            } throw new Exception("Can not remove moneyTransfer.account with id: " + id);
+            } throw new Exception("Can not remove account with id: " + id);
         } catch (Exception e) {
             return new OperationResponse(OperationStatus.ERROR,ERROR_DELETE_ACCOUNT + " WITH ID : " +id + ". " + e.getMessage());
         }

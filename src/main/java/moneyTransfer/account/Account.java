@@ -25,7 +25,5 @@ public interface Account {
     boolean isDeleted();
 
     void setDeleted(boolean deletedStatus);
-
-    boolean isVIP();
 }
 

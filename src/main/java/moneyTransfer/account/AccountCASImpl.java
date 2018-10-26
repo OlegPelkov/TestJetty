@@ -3,10 +3,8 @@ package moneyTransfer.account;
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-public class AccountVIPImpl implements Account {
+public class AccountCASImpl implements Account {
 
     /**
      * Use CAS algorithm for introduction and withdrawal
@@ -15,7 +13,7 @@ public class AccountVIPImpl implements Account {
     private AtomicReference<BigDecimal> currentValue = new AtomicReference<>();
     private final AtomicBoolean deletedStatus = new AtomicBoolean(false);
 
-    public AccountVIPImpl(Long id, BigDecimal currentValue) {
+    public AccountCASImpl(Long id, BigDecimal currentValue) {
         this.id = id;
         this.currentValue.set(currentValue);
     }
@@ -74,16 +72,11 @@ public class AccountVIPImpl implements Account {
     }
 
     @Override
-    public boolean isVIP() {
-        return true;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AccountVIPImpl account = (AccountVIPImpl) o;
+        AccountCASImpl account = (AccountCASImpl) o;
 
         return id.equals(account.id);
 

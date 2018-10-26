@@ -12,8 +12,6 @@ public class Messages {
 
     public static final String INVALID_PARAMETER = " Invalid parameter";
 
-    public static final String ACCOUNT_NOT_SUPPORTED = " This account type is not supported";
-
     public static final String EMPTY_COMMAND = " Empty command field";
 
     public static final String UNKNOWN_COMMAND = " unknown command";

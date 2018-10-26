@@ -8,7 +8,12 @@ import org.apache.log4j.Priority;
 public class Main {
 
     public static void main(String[] args) throws Exception {
+        boolean casMode = false;
+        if (args != null && args.length>0) {
+            casMode = "casMode".equals(args[0]);
+        }
         configureLogger();
+        AccountServer.getInstance().setCas(casMode);
         AccountServer.getInstance().start();
         AccountServer.getInstance().getServer().join();
     }
