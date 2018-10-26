@@ -14,6 +14,8 @@ import static moneyTransfer.messages.Messages.INVALID_PARAMETER;
 
 public class CommandDelete extends Command {
 
+    public final static String NAME = "delete";
+
     @Override
     public OperationResponse execute(Map<String, AccountOperationHandler> operationHandlerContainer, HttpServletRequest req) {
         String accountId = req.getParameter(ID);

@@ -6,6 +6,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import moneyTransfer.AccountServer;
@@ -14,12 +15,12 @@ import moneyTransfer.messages.OperationResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-//@Ignore
+@Ignore
 public class TestScenario {
 
-    private static final String url = "http://127.0.0.1:8081/moneyTransfer?";
-    private CloseableHttpClient client;
-    private Gson gson;
+    protected static final String url = "http://127.0.0.1:8081/moneyTransfer?";
+    protected CloseableHttpClient client;
+    protected Gson gson;
 
     @Before
     public void setup() {
@@ -34,16 +35,6 @@ public class TestScenario {
 
     @Test
     public void testSteps() throws Exception {
-        HttpGet request = new HttpGet(url+"command=create&value=1000");
-        HttpResponse response = client.execute(request);
-        BufferedReader rd = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
-        String line = "";
-        StringBuffer sb = new StringBuffer();
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
-        }
-        OperationResponse result = gson.fromJson(sb.toString(), OperationResponse.class);
-        System.out.println(result);
     }
 
     @After

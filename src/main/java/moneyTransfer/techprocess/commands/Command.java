@@ -9,11 +9,12 @@ import java.util.Map;
 
 public abstract class Command {
 
-    protected final static String SRC_ID = "srcId";
-    protected final static String ID = "id";
-    protected final static String DEST_ID = "destId";
-    protected final static String VALUE = "value";
-    protected final static String VIP = "vip";
+    public final static String SRC_ID = "srcId";
+    public final static String ID = "id";
+    public final static String DEST_ID = "destId";
+    public final static String VALUE = "value";
+    public final static String VIP = "vip";
+    public final static String COMMAND = "command";
 
     protected AccountOperationHandler accountOperationHandler = null;
 

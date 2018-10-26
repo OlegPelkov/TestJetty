@@ -16,6 +16,8 @@ import static moneyTransfer.messages.Messages.INVALID_PARAMETER;
 
 public class CommandTransfer extends Command {
 
+    public final static String NAME = "transfer";
+
     @Override
     public OperationResponse execute(Map<String, AccountOperationHandler> operationHandlerContainer, HttpServletRequest req) {
         String srcId = req.getParameter(SRC_ID);

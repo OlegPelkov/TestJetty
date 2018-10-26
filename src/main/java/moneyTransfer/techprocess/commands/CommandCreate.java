@@ -14,6 +14,8 @@ import static moneyTransfer.messages.Messages.INVALID_PARAMETER;
 
 public class CommandCreate extends Command {
 
+    public final static String NAME = "create";
+
     @Override
     public OperationResponse execute(Map<String, AccountOperationHandler> operationHandlerContainer, HttpServletRequest req) {
         String value = req.getParameter(VALUE);

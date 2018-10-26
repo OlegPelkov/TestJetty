@@ -10,6 +10,14 @@ public class OperationResponse {
         this.msg = msg;
     }
 
+    public OperationStatus getOperationStatus() {
+        return operationStatus;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
     @Override
     public String toString() {
         return "OperationResponse{" +

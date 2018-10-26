@@ -13,9 +13,9 @@ public class CommandsContainer {
     private Map<String, Class> commandMap = new HashMap<>();
 
     public void init(){
-        commandMap.put("transfer", CommandTransfer.class);
-        commandMap.put("delete", CommandDelete.class);
-        commandMap.put("create", CommandCreate.class);
+        commandMap.put(CommandTransfer.NAME, CommandTransfer.class);
+        commandMap.put(CommandDelete.NAME, CommandDelete.class);
+        commandMap.put(CommandCreate.NAME, CommandCreate.class);
     }
 
     public Command getCommand(String name) {

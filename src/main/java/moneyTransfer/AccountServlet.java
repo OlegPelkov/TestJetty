@@ -28,16 +28,13 @@ public class AccountServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(AccountServlet.class);
 
     private final Map<String, AccountOperationHandler> operationHandlerContainer = new HashMap<>();
-    private AccountOperationHandlerStandardImpl accountOperationHandler;
     private CommandsContainer commandsContainer;
     private Gson gson;
-
-    private final static String COMMAND = "command";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         LOG.info("GET: {} {}",req.getRequestURL().toString(), req.getQueryString());
-        OperationResponse result = execute(req.getParameter(COMMAND),req);
+        OperationResponse result = execute(req.getParameter(Command.COMMAND),req);
         LOG.info("RESULT: {}",result.toString());
         resp.getWriter().write(gson.toJson(result));
     }
