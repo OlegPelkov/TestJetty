@@ -1,5 +1,5 @@
-# TestJetty
-TestJetty
+# UnblockingTransferJetty
+UnblockingTransferJetty
 a API for money transfers between accounts.
 
 The project have two versions of transfer operation, one use concurrent lock and second use non-blocking CAS algorithm.
